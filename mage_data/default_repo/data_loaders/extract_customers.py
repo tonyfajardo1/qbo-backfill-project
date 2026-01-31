@@ -1,5 +1,6 @@
 import requests
 import base64
+import time
 from datetime import datetime, timezone
 from typing import List, Dict, Any
 
@@ -49,24 +50,34 @@ class QBOClient:
         print("[AUTH] Token obtenido exitosamente")
         return self.access_token
 
-    def query(self, query_string):
+    def query(self, query_string, max_retries=3):
         if not self.access_token:
             self.get_access_token()
 
         url = f"{self.API_BASE}/v3/company/{self.realm_id}/query"
-        response = requests.get(
-            url,
-            headers={
-                'Authorization': f'Bearer {self.access_token}',
-                'Accept': 'application/json',
-            },
-            params={'query': query_string},
-        )
 
-        if response.status_code != 200:
+        for attempt in range(max_retries):
+            response = requests.get(
+                url,
+                headers={
+                    'Authorization': f'Bearer {self.access_token}',
+                    'Accept': 'application/json',
+                },
+                params={'query': query_string},
+            )
+
+            if response.status_code == 200:
+                return response.json()
+
+            if response.status_code == 429 or response.status_code >= 500:
+                wait_time = (2 ** attempt) + 1
+                print(f"[RETRY] Intento {attempt + 1}/{max_retries} - Esperando {wait_time}s...")
+                time.sleep(wait_time)
+                continue
+
             raise Exception(f"API error: {response.status_code} - {response.text}")
 
-        return response.json()
+        raise Exception(f"API error después de {max_retries} intentos: {response.status_code} - {response.text}")
 
     def fetch_all_customers(self, start_date, end_date):
         records = []
