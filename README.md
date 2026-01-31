@@ -453,15 +453,15 @@ LIMIT 5;
 
 ## Checklist de Aceptacion
 
-- [ ] Mage y Postgres se comunican por nombre de servicio
-- [ ] Todos los secretos (QBO y Postgres) estan en Mage Secrets; no hay secretos en el repo/entorno expuesto
-- [ ] Pipelines `qb_<entidad>_backfill` acepta `fecha_inicio` y `fecha_fin` (UTC) y segmenta el rango
-- [ ] Trigger one-time configurado, ejecutado y luego deshabilitado/marcado como completado
-- [ ] Esquema raw con tablas por entidad, payload completo y metadatos obligatorios
-- [ ] Idempotencia verificada: reejecucion de un tramo no genera duplicados
-- [ ] Paginacion y rate limits manejados y documentados
-- [ ] Volumetria y validaciones minimas registradas y archivadas como evidencia
-- [ ] Runbook de reanudacion y reintentos disponible y seguido
+- [x] Mage y Postgres se comunican por nombre de servicio
+- [x] Todos los secretos (QBO y Postgres) estan en Mage Secrets; no hay secretos en el repo/entorno expuesto
+- [x] Pipelines `qb_<entidad>_backfill` acepta `fecha_inicio` y `fecha_fin` (UTC) y segmenta el rango
+- [x] Trigger one-time configurado, ejecutado y luego deshabilitado/marcado como completado
+- [x] Esquema raw con tablas por entidad, payload completo y metadatos obligatorios
+- [x] Idempotencia verificada: reejecucion de un tramo no genera duplicados
+- [x] Paginacion y rate limits manejados y documentados
+- [x] Volumetria y validaciones minimas registradas y archivadas como evidencia
+- [x] Runbook de reanudacion y reintentos disponible y seguido
 
 ---
 
