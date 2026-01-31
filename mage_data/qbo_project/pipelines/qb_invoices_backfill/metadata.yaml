@@ -1,0 +1,35 @@
+blocks:
+  - name: extract_invoices
+    type: data_loader
+    uuid: extract_invoices
+    language: python
+    color: blue
+    upstream_blocks: []
+
+  - name: transform_invoices
+    type: transformer
+    uuid: transform_invoices
+    language: python
+    color: purple
+    upstream_blocks:
+      - extract_invoices
+
+  - name: load_invoices
+    type: data_exporter
+    uuid: load_invoices
+    language: python
+    color: green
+    upstream_blocks:
+      - transform_invoices
+
+name: qb_invoices_backfill
+type: python
+uuid: qb_invoices_backfill
+description: >
+  Pipeline de backfill historico para Invoices de QuickBooks Online.
+  Extrae facturas con filtros de fecha, paginacion y las carga en
+  PostgreSQL con idempotencia (upsert).
+
+variables:
+  fecha_inicio: '2024-01-01T00:00:00Z'
+  fecha_fin: '2024-12-31T23:59:59Z'

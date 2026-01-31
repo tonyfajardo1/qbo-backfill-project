@@ -1,0 +1,57 @@
+# Datos de PostgreSQL (no subir a git)
+postgres_data/
+
+# Datos de Mage (secretos y cache)
+mage_db/
+
+# Datos de PgAdmin
+pgadmin_data/
+
+# Archivos de entorno con secretos
+.env
+.env.local
+.env.*.local
+
+# Credenciales y secretos
+*.pem
+*.key
+credentials.json
+secrets.yaml
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+
+# Logs
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Mage cache y archivos temporales
+.cache/
+.file_versions/
+.variables/
+.operation_history/
+.ssh_tunnel/
+.mage_temp/
+mage-ai.db
+
+# Claude
+.claude/
+
+# Mage secrets folder
+mage_data/secrets/
+
+# Windows special files
+nul

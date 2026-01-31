@@ -1,0 +1,66 @@
+services:
+  # ============================================
+  # MAGE AI - Orquestador de pipelines
+  # ============================================
+  mage:
+    image: mageai/mageai:0.9.75
+    container_name: mage_qbo
+    ports:
+      - "6789:6789"
+    volumes:
+      - ./mage_data:/home/src
+      - ./mage_db:/root/.mage_data
+    environment:
+      - MAGE_DATA_DIR=/home/src
+      - PROJECT_NAME=qbo_project
+      - REQUIRE_USER_AUTH=true
+    networks:
+      - qbo_network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+  # ============================================
+  # POSTGRESQL - Base de datos destino
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_qbo
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=qbo_user
+      - POSTGRES_PASSWORD=qbo_password_change_me
+      - POSTGRES_DB=qbo_database
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - qbo_network
+    restart: unless-stopped
+
+  # ============================================
+  # PGADMIN - Interfaz web para PostgreSQL
+  # ============================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_qbo
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+    networks:
+      - qbo_network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+# ============================================
+# RED COMPARTIDA
+# ============================================
+networks:
+  qbo_network:
+    driver: bridge
+    name: qbo_network

@@ -1,0 +1,35 @@
+blocks:
+  - name: extract_customers
+    type: data_loader
+    uuid: extract_customers
+    language: python
+    color: blue
+    upstream_blocks: []
+
+  - name: transform_customers
+    type: transformer
+    uuid: transform_customers
+    language: python
+    color: purple
+    upstream_blocks:
+      - extract_customers
+
+  - name: load_customers
+    type: data_exporter
+    uuid: load_customers
+    language: python
+    color: green
+    upstream_blocks:
+      - transform_customers
+
+name: qb_customers_backfill
+type: python
+uuid: qb_customers_backfill
+description: >
+  Pipeline de backfill historico para Customers de QuickBooks Online.
+  Extrae clientes con filtros de fecha, paginacion y los carga en
+  PostgreSQL con idempotencia (upsert).
+
+variables:
+  fecha_inicio: '2024-01-01T00:00:00Z'
+  fecha_fin: '2024-12-31T23:59:59Z'

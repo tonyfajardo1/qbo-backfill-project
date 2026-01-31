@@ -1,0 +1,24 @@
+# Configuracion de conexiones de Mage AI
+# IMPORTANTE: Las credenciales reales deben estar en Mage Secrets, no aqui
+
+version: 0.1.1
+
+default:
+  # PostgreSQL - Los valores reales se obtienen de Mage Secrets
+  POSTGRES_CONNECT_TIMEOUT: 10
+  POSTGRES_DBNAME: "{{ mage_secret_var('PG_DATABASE') }}"
+  POSTGRES_SCHEMA: raw
+  POSTGRES_USER: "{{ mage_secret_var('PG_USER') }}"
+  POSTGRES_PASSWORD: "{{ mage_secret_var('PG_PASSWORD') }}"
+  POSTGRES_HOST: "{{ mage_secret_var('PG_HOST') }}"
+  POSTGRES_PORT: "{{ mage_secret_var('PG_PORT') }}"
+
+# Configuracion de desarrollo (para pruebas locales)
+dev:
+  POSTGRES_CONNECT_TIMEOUT: 10
+  POSTGRES_DBNAME: qbo_database
+  POSTGRES_SCHEMA: raw
+  POSTGRES_USER: qbo_user
+  POSTGRES_PASSWORD: "{{ mage_secret_var('PG_PASSWORD') }}"
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432

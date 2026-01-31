@@ -1,0 +1,35 @@
+blocks:
+  - name: extract_items
+    type: data_loader
+    uuid: extract_items
+    language: python
+    color: blue
+    upstream_blocks: []
+
+  - name: transform_items
+    type: transformer
+    uuid: transform_items
+    language: python
+    color: purple
+    upstream_blocks:
+      - extract_items
+
+  - name: load_items
+    type: data_exporter
+    uuid: load_items
+    language: python
+    color: green
+    upstream_blocks:
+      - transform_items
+
+name: qb_items_backfill
+type: python
+uuid: qb_items_backfill
+description: >
+  Pipeline de backfill historico para Items de QuickBooks Online.
+  Extrae productos/items con filtros de fecha, paginacion y los carga en
+  PostgreSQL con idempotencia (upsert).
+
+variables:
+  fecha_inicio: '2024-01-01T00:00:00Z'
+  fecha_fin: '2024-12-31T23:59:59Z'
