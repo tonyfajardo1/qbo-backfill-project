@@ -227,13 +227,58 @@ fecha_fin: 2024-12-31T23:59:59Z
 
 ### Segmentacion (Chunking)
 
-Para volumenes grandes, se recomienda dividir el rango en periodos menores (ej: por mes):
+Para volumenes grandes, se recomienda dividir el rango en periodos menores para:
+- **Controlar el volumen** de datos por ejecucion
+- **Facilitar reintentos** en caso de fallo (solo se reprocesa el tramo fallido)
+- **Mejorar observabilidad** con metricas por tramo
+- **Evitar timeouts** en extracciones muy largas
 
-| Tramo | fecha_inicio | fecha_fin |
-|-------|--------------|-----------|
-| Enero 2024 | 2024-01-01T00:00:00Z | 2024-01-31T23:59:59Z |
-| Febrero 2024 | 2024-02-01T00:00:00Z | 2024-02-29T23:59:59Z |
-| ... | ... | ... |
+#### Estrategia de Segmentacion Recomendada
+
+| Volumen Estimado | Segmentacion Sugerida |
+|------------------|----------------------|
+| < 1,000 registros | Sin segmentar (rango completo) |
+| 1,000 - 10,000 registros | Por trimestre |
+| 10,000 - 50,000 registros | Por mes |
+| > 50,000 registros | Por semana o dia |
+
+#### Ejemplo: Segmentacion Mensual para 2024
+
+| Tramo | fecha_inicio | fecha_fin | Trigger |
+|-------|--------------|-----------|---------|
+| Enero 2024 | 2024-01-01T00:00:00Z | 2024-01-31T23:59:59Z | trigger_enero |
+| Febrero 2024 | 2024-02-01T00:00:00Z | 2024-02-29T23:59:59Z | trigger_febrero |
+| Marzo 2024 | 2024-03-01T00:00:00Z | 2024-03-31T23:59:59Z | trigger_marzo |
+| ... | ... | ... | ... |
+| Diciembre 2024 | 2024-12-01T00:00:00Z | 2024-12-31T23:59:59Z | trigger_diciembre |
+
+#### Proceso de Ejecucion Segmentada
+
+1. **Crear un trigger one-time por cada tramo** en Mage UI
+2. **Ejecutar secuencialmente** o en paralelo (si los recursos lo permiten)
+3. **Verificar cada tramo** en `raw.backfill_log` antes de continuar
+4. **Deshabilitar triggers** completados para evitar re-ejecuciones
+
+#### Verificacion de Tramos Ejecutados
+
+```sql
+-- Ver estado de todos los tramos ejecutados
+SELECT
+    entity_name,
+    window_start_utc,
+    window_end_utc,
+    records_inserted,
+    records_updated,
+    status,
+    duration_seconds
+FROM raw.backfill_log
+ORDER BY window_start_utc;
+
+-- Identificar tramos faltantes o fallidos
+SELECT * FROM raw.backfill_log
+WHERE status = 'failed'
+ORDER BY window_start_utc;
+```
 
 ### Estructura de cada Pipeline
 

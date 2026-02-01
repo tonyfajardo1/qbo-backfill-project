@@ -9,10 +9,14 @@ from typing import List, Dict, Any, Optional
 import psycopg2
 from psycopg2.extras import execute_values, Json
 
-
-def get_secret_value(key):
-    """Obtiene secretos desde variables de entorno"""
-    return os.environ.get(key)
+# Importar funcion de Mage Secrets
+try:
+    from mage_ai.data_preparation.shared.secrets import get_secret_value
+except ImportError:
+    # Fallback para desarrollo local fuera de Mage
+    def get_secret_value(key, **kwargs):
+        """Fallback: obtiene secretos desde variables de entorno"""
+        return os.environ.get(key)
 
 
 class PostgresClient:
